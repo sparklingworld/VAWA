@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAWA — Voice Academic Viva Assessor & Universal Defense Chamber</title>
+  <meta name="description" content="Autonomous AI Viva Examination Agent with Universal Multi-Disciplinary Knowledge, Voice Listening & Speech Synthesis, Enterprise Security, and Comparative Answer Simplification.">
+  
+  <!-- Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@400;500;600;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Design System -->
+  <link rel="stylesheet" href="css/vawa.css">
+</head>
+<body>
+  <!-- Ambient Graphic Grid -->
+  <div class="ambient-pattern" aria-hidden="true"></div>
+
+  <div class="vawa-app">
+    <!-- Top Command & Security Header -->
+    <header class="vawa-header" role="banner">
+      <div class="brand-wrapper">
+        <div class="brand-crest" aria-label="VAWA Crest">V</div>
+        <div class="brand-titles">
+          <h1>VAWA <span style="color:var(--bronze-gold);font-weight:400;">·</span> VIVA AGENT</h1>
+          <div class="brand-tagline">Voice Adaptive Viva Assessor & Universal Defense Chamber</div>
+        </div>
+      </div>
+
+      <div class="header-status-group">
+        <div id="badge-security-status" class="badge-bold secure" title="Client-Side Cryptographic Shield Active">
+          <span class="badge-dot"></span>
+          <span>AES-256 SHIELD</span>
+        </div>
+
+        <button id="btn-toggle-mute" class="btn-luxe" type="button" aria-label="Toggle Examiner Voice Audio">
+          🔊 Voice Active
+        </button>
+
+        <button id="btn-open-vault" class="btn-luxe" type="button" aria-label="Open Cryptographic Key Vault">
+          🔒 Key Vault
+        </button>
+
+        <button id="btn-open-audit" class="btn-luxe" type="button" aria-label="Open Security Audit Log">
+          🛡️ Security HUD
+        </button>
+
+        <button id="btn-open-dossier" class="btn-luxe gold" type="button" aria-label="Open Examination Dossier">
+          📜 Viva Dossier
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="vawa-grid" role="main">
+      <!-- LEFT COLUMN: Examiner Podium & Command Dial -->
+      <aside class="examiner-podium" aria-label="Examiner Podium">
+        <!-- Examiner Portrait & Voice Visualizer -->
+        <div class="podium-card">
+          <div id="examiner-avatar-chamber" class="examiner-avatar-chamber">
+            <div class="avatar-halo-ring">
+              <div class="pulse-ring"></div>
+              <div class="avatar-core">🎓</div>
+            </div>
+            <h2 class="examiner-title">Lead Viva Examiner</h2>
+            <div id="examiner-status-label" class="examiner-status-label">Examiner Standby</div>
+          </div>
+
+          <!-- Real-Time Voice Waveform Visualizer -->
+          <div class="visualizer-wrapper">
+            <div class="visualizer-header">
+              <span>Acoustic Frequency / FFT</span>
+              <span id="audio-state-tag" style="color:var(--bronze-light);">Live Monitor</span>
+            </div>
+            <canvas id="vawa-audio-canvas" width="320" height="52" aria-label="Live Voice Waveform Visualizer"></canvas>
+          </div>
+
+          <!-- Topic Inquiry Command Input -->
+          <div class="control-block">
+            <label for="vawa-topic-input" class="control-label">Academic Topic or Command</label>
+            <input 
+              type="text" 
+              id="vawa-topic-input" 
+              class="input-luxe" 
+              placeholder="e.g. Ask me about Quantum Computing..." 
+              value="Computer Science & Distributed Systems"
+              aria-label="Enter examination topic or command"
+            >
+          </div>
+
+          <!-- Difficulty Tiers -->
+          <div class="control-block">
+            <div class="control-label">Scrutiny Tier (Difficulty)</div>
+            <div class="difficulty-tiers-grid" role="radiogroup" aria-label="Select viva difficulty tier">
+              <button class="tier-btn" data-tier="foundation" type="button">🟢 Foundation</button>
+              <button class="tier-btn active" data-tier="standard" type="button">🟡 Standard</button>
+              <button class="tier-btn" data-tier="rigorous" type="button">🟠 Rigorous</button>
+              <button class="tier-btn" data-tier="crucible" type="button">🔴 Crucible (PhD)</button>
+            </div>
+          </div>
+
+          <button id="btn-start-exam" class="btn-luxe gold" style="width:100%;margin-top:14px;padding:12px;" type="button">
+            ⚖️ Begin Viva Examination
+          </button>
+        </div>
+
+        <!-- Quick Flagship Disciplines -->
+        <div class="podium-card">
+          <div class="control-label" style="margin-bottom:10px;">Flagship Viva Curricula</div>
+          <div class="concept-tag-cloud">
+            <button class="quick-topic-pill tier-btn" data-topic="Computer Science & Distributed Systems" type="button">💻 Distributed Systems</button>
+            <button class="quick-topic-pill tier-btn" data-topic="Artificial Intelligence & Deep Learning" type="button">🧠 Artificial Intelligence</button>
+            <button class="quick-topic-pill tier-btn" data-topic="Clinical Medicine & Human Physiology" type="button">🩺 Clinical Medicine</button>
+            <button class="quick-topic-pill tier-btn" data-topic="Jurisprudence & Constitutional Law" type="button">⚖️ Constitutional Law</button>
+            <button class="quick-topic-pill tier-btn" data-topic="Quantum Physics & Thermodynamics" type="button">🔬 Quantum Physics</button>
+            <button class="quick-topic-pill tier-btn" data-topic="Quantitative Finance & Economics" type="button">📈 Quantitative Finance</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT COLUMN: Viva Examination Defense Chamber -->
+      <section class="defense-chamber" aria-label="Viva Examination Defense Chamber">
+        <!-- 1. The Active Inquiry (Question Board) -->
+        <div id="question-board" class="question-board">
+          <div class="question-meta-bar">
+            <div id="question-counter" class="question-counter">
+              <span class="badge-dot" style="background:var(--bronze-gold);"></span>
+              Inquiry #1
+            </div>
+            <span id="question-difficulty-tag" class="question-difficulty-tag">STANDARD</span>
+          </div>
+
+          <h3 id="question-text" class="question-text-prominent">
+            Candidate, define the core distinction between a process and a thread, and explain how the operating system manages their memory spaces.
+          </h3>
+
+          <div class="question-prompt-hint">
+            <span>💡 Instructions:</span> Speak clearly via microphone or compose your defense in the terminal console below.
+          </div>
+        </div>
+
+        <!-- 2. Candidate Response Console -->
+        <div id="candidate-console" class="candidate-console">
+          <div class="console-header">
+            <div class="console-title">
+              <span>🎙️</span> Candidate Oral Defense Input
+            </div>
+            <label style="display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);cursor:pointer;">
+              <input type="checkbox" id="hands-free-toggle" style="accent-color:var(--bronze-gold);">
+              <span>Hands-Free Viva Mode</span>
+            </label>
+          </div>
+
+          <!-- Live Vocal Stream / Text Editor -->
+          <div 
+            id="transcript-stream-box" 
+            class="transcript-stream-box" 
+            contenteditable="true" 
+            data-placeholder="Examiner listening... Speak your defense into the microphone, or type here."
+            aria-label="Candidate defense response area"
+          ></div>
+
+          <div class="interaction-action-bar">
+            <button id="btn-speak-mic" class="btn-speak-mic" type="button">
+              <span>🎙️</span> Tap to Speak Defense
+            </button>
+            <button id="btn-submit-defense" class="btn-submit-defense" type="button">
+              Submit Defense To Board →
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Evaluation & The "Good & Simple Answer" Stage (Revealed upon submission) -->
+        <div id="evaluation-stage" class="evaluation-stage" style="display:none;">
+          <!-- Scorecard Banner -->
+          <div class="scorecard-banner">
+            <div class="scorecard-left">
+              <div class="score-dial">
+                <span id="score-val" class="score-val">88</span>
+                <span class="score-max">/ 100</span>
+              </div>
+              <div class="score-details">
+                <h3 id="honors-title">Upper Second Honours (Magna Cum Laude)</h3>
+                <p id="score-feedback-text" class="score-feedback-text">
+                  Commendable defense. You demonstrated commanding grasp of core mechanisms.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comparative Breakdown Grid: Candidate Answer vs Good & Simple Answer -->
+          <div class="comparative-grid">
+            <!-- Left: Candidate Defense Review -->
+            <div class="compare-card">
+              <div class="card-title-bar">
+                <h4>Candidate Recorded Defense</h4>
+                <span class="badge-bold" style="font-size:10px;">Your Submission</span>
+              </div>
+
+              <div id="candidate-defense-display" class="defense-text-display">
+                (Transcribed defense will appear here...)
+              </div>
+
+              <div>
+                <div class="control-label" style="font-size:11px;margin-bottom:4px;">Concepts Grasped:</div>
+                <div id="concept-hits-container" class="concept-tag-cloud"></div>
+              </div>
+
+              <div>
+                <div class="control-label" style="font-size:11px;margin-bottom:4px;color:var(--text-muted);">Missed Nuances / Blindspots:</div>
+                <div id="concept-misses-container" class="concept-tag-cloud"></div>
+              </div>
+            </div>
+
+            <!-- Right: The Masterpiece "Good & Simple Answer" -->
+            <div class="compare-card simple-answer-masterpiece">
+              <div class="card-title-bar">
+                <h4 style="color:var(--bronze-light);display:flex;align-items:center;gap:6px;">
+                  <span>✨</span> The Good & Simple Answer
+                </h4>
+                <span class="badge-bold" style="border-color:var(--bronze-light);color:var(--bronze-gold);font-size:10px;">
+                  Intuition Model
+                </span>
+              </div>
+
+              <!-- 30-Second Mental Model -->
+              <div id="simple-summary-text" class="simple-intuition-banner">
+                A process is a completely separate house with its own private yard. A thread is an individual person living and working inside that same house.
+              </div>
+
+              <!-- Real-World Analogy -->
+              <div class="analogy-capsule">
+                <div class="analogy-capsule-header">
+                  <span>💡</span> The Mental Analogy
+                </div>
+                <div id="simple-analogy-text" class="analogy-text">
+                  Think of an office building: A process is an entire department with its own locked room. Threads are coworkers in that room sharing the same whiteboards.
+                </div>
+              </div>
+
+              <!-- 3 Core Pillars -->
+              <div class="control-label" style="font-size:11px;margin-top:4px;">The 3 Definitive Pillars:</div>
+              <div id="three-pillars-container" class="three-pillars-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action Bar -->
+          <div class="next-question-bar">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--bronze-light);">
+              Ready for the next inquiry?
+            </span>
+            <div style="display:flex;gap:10px;">
+              <button id="btn-conclude-exam" class="btn-luxe" type="button">
+                Conclude Viva
+              </button>
+              <button id="btn-next-question" class="btn-luxe gold" type="button">
+                Next Inquiry →
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       MODALS: CRYPTOGRAPHIC VAULT, SECURITY AUDIT HUD, DOSSIER TRANSCRIPT
+       ========================================================================== -->
+
+  <!-- 1. Cryptographic Key Vault Modal (AES-256-GCM) -->
+  <div id="modal-vault" class="vawa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="vault-modal-title">
+    <div class="vawa-modal">
+      <div class="modal-header">
+        <h2 id="vault-modal-title">🔒 Cryptographic Key Vault (AES-256-GCM)</h2>
+        <button class="modal-close-btn" type="button" aria-label="Close modal">&times;</button>
+      </div>
+
+      <p style="font-size:13px;color:var(--text-secondary);">
+        VAWA employs zero-knowledge client security. When providing a Gemini API key for generative universal intelligence, your key is derived with PBKDF2 (100,000 iterations) and sealed with AES-GCM 256-bit encryption. Zero telemetry is sent to any third-party server.
+      </p>
+
+      <div style="background:var(--bg-noir);padding:10px 14px;border-radius:8px;border:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:var(--font-mono);font-size:12px;">Active Vault Status:</span>
+        <span id="vault-status-text" style="font-family:var(--font-mono);font-size:12px;font-weight:700;"></span>
+      </div>
+
+      <div class="control-block">
+        <label for="vault-api-key-input" class="control-label">Gemini API Key</label>
+        <input type="password" id="vault-api-key-input" class="input-luxe" placeholder="AIzaSy..." autocomplete="off">
+      </div>
+
+      <div class="control-block">
+        <label for="vault-passphrase-input" class="control-label">Master Encryption Passphrase</label>
+        <input type="password" id="vault-passphrase-input" class="input-luxe" placeholder="Your secret local passphrase..." autocomplete="off">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button id="btn-save-vault-key" class="btn-luxe gold" style="flex:1;" type="button">
+          🔐 Encrypt & Save Key
+        </button>
+        <button id="btn-unlock-vault-key" class="btn-luxe" type="button">
+          🔓 Unlock
+        </button>
+      </div>
+
+      <hr style="border:0;border-top:1px solid var(--border-subtle);margin:6px 0;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:11px;color:var(--text-dim);font-family:var(--font-mono);">Emergency In-Memory Zeroization</span>
+        <button id="btn-panic-purge-vault" class="btn-luxe" style="border-color:#ef4444;color:#f87171;" type="button">
+          ⚠️ Panic Wipe All Keys
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Security Audit & Anti-Cheat HUD Modal -->
+  <div id="modal-audit" class="vawa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="audit-modal-title">
+    <div class="vawa-modal">
+      <div class="modal-header">
+        <h2 id="audit-modal-title">🛡️ Security Shield & Integrity Audit HUD</h2>
+        <button class="modal-close-btn" type="button" aria-label="Close modal">&times;</button>
+      </div>
+
+      <p style="font-size:13px;color:var(--text-secondary);">
+        Active real-time audit trail monitoring prompt injection attempts, adversarial jailbreaks, rate-limiting, and academic integrity focus shifts.
+      </p>
+
+      <div class="security-audit-feed" id="security-audit-feed">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div style="background:var(--bg-noir);padding:12px;border-radius:8px;border:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">
+        <div>✓ Content Security Policy (CSP): Enforced</div>
+        <div>✓ Cross-Origin-Opener-Policy (COOP): same-origin-allow-popups</div>
+        <div>✓ Multi-Vector Prompt Sanitizer: Active (Role-hijack, Delimiters, XSS)</div>
+        <div>✓ Rate Limiter: Token Bucket 10/min active</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Viva Defense Dossier Modal -->
+  <div id="modal-dossier" class="vawa-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="dossier-modal-title">
+    <div class="vawa-modal" style="max-width:780px;">
+      <div class="modal-header">
+        <h2 id="dossier-modal-title">📜 Academic Viva Examination Dossier</h2>
+        <button class="modal-close-btn" type="button" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div id="dossier-summary-banner" style="background:var(--bg-espresso-elevated);border:1.5px solid var(--bronze-mid);border-radius:8px;padding:14px;">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div id="dossier-feed-container" class="dossier-report-view">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:10px;">
+        <button id="btn-export-markdown" class="btn-luxe" type="button">
+          📥 Download Markdown Dossier
+        </button>
+        <button id="btn-print-dossier" class="btn-luxe gold" type="button">
+          🖨️ Print Official Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/security.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/knowledge.js"></script>
+  <script src="js/gemini.js"></script>
+  <script src="js/vawa-agent.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
