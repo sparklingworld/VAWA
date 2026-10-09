@@ -243,6 +243,21 @@ const VAWAudio = (() => {
   }
 
   // --- SPEECH RECOGNITION (STT) ---
+  let committedTranscript = '';
+  let activeSessionFinal = '';
+
+  /**
+   * Clears accumulated speech buffer for a new inquiry
+   */
+  function clearSpeechBuffer() {
+    committedTranscript = '';
+    activeSessionFinal = '';
+    if (silenceTimer) clearTimeout(silenceTimer);
+  }
+
+  function getSpokenText() {
+    return (committedTranscript + ' ' + activeSessionFinal).replace(/\s+/g, ' ').trim();
+  }
 
   /**
    * Initializes Web Speech Recognition
@@ -269,23 +284,33 @@ const VAWAudio = (() => {
     };
 
     recognition.onresult = (event) => {
-      let interim = '';
-      let final = '';
+      let currentSessionFinal = '';
+      let currentInterim = '';
 
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
+      for (let i = 0; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
-          final += event.results[i][0].transcript;
+          currentSessionFinal += event.results[i][0].transcript + ' ';
         } else {
-          interim += event.results[i][0].transcript;
+          currentInterim += event.results[i][0].transcript;
         }
       }
 
+      activeSessionFinal = currentSessionFinal.trim();
+      const combinedFinal = (committedTranscript + ' ' + activeSessionFinal).replace(/\s+/g, ' ').trim();
+      const fullText = (combinedFinal + (currentInterim ? ' ' + currentInterim : '')).replace(/\s+/g, ' ').trim();
+
       if (onSpeechResultCallback) {
-        onSpeechResultCallback({ interim, final });
+        onSpeechResultCallback({
+          interim: currentInterim.trim(),
+          final: combinedFinal,
+          fullText: fullText
+        });
       }
 
-      // Reset silence detection timer
-      resetSilenceTimer();
+      // Reset silence detection timer only if candidate has started speaking
+      if (fullText.length >= 6) {
+        resetSilenceTimer();
+      }
     };
 
     recognition.onerror = (event) => {
@@ -296,8 +321,12 @@ const VAWAudio = (() => {
     };
 
     recognition.onend = () => {
+      if (activeSessionFinal) {
+        committedTranscript = (committedTranscript + ' ' + activeSessionFinal).replace(/\s+/g, ' ').trim();
+        activeSessionFinal = '';
+      }
       if (isListening) {
-        // If still supposed to be listening, attempt soft restart
+        // If still supposed to be listening, attempt soft restart without losing text
         try { recognition.start(); } catch (e) {}
       } else {
         notifySpeechState('IDLE');
@@ -313,7 +342,7 @@ const VAWAudio = (() => {
       if (isListening && onSilenceDetectedCallback) {
         onSilenceDetectedCallback();
       }
-    }, 3200); // 3.2 seconds of silence signals candidate conclusion
+    }, 3500); // 3.5 seconds of silence signals candidate conclusion
   }
 
   function startListening() {
@@ -322,9 +351,9 @@ const VAWAudio = (() => {
       stopSpeaking();
     }
 
+    isListening = true;
     if (recognition) {
       try {
-        isListening = true;
         recognition.start();
       } catch (e) {
         // Already started or restarting
@@ -339,6 +368,10 @@ const VAWAudio = (() => {
   function stopListening() {
     isListening = false;
     if (silenceTimer) clearTimeout(silenceTimer);
+    if (activeSessionFinal) {
+      committedTranscript = (committedTranscript + ' ' + activeSessionFinal).replace(/\s+/g, ' ').trim();
+      activeSessionFinal = '';
+    }
     if (recognition) {
       try {
         recognition.stop();
@@ -506,6 +539,8 @@ const VAWAudio = (() => {
     speak,
     stopSpeaking,
     initSpeechRecognition,
+    clearSpeechBuffer,
+    getSpokenText,
     startListening,
     stopListening,
     toggleListening,

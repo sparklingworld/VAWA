@@ -30,7 +30,7 @@ const VAWAgent = (() => {
   let currentQuestion = null;
   let questionIndex = 0;
   let sessionHistory = [];
-  let isHandsFreeMode = false;
+  let isHandsFreeMode = true; // Enabled by default for natural viva conversation
 
   // Listeners for UI binding
   const listeners = {
@@ -167,9 +167,8 @@ const VAWAgent = (() => {
    */
   function prepareCandidateResponse() {
     setState(STATES.CANDIDATE_LISTENING);
-    if (isHandsFreeMode) {
-      window.VAWAudio.startListening();
-    }
+    window.VAWAudio.clearSpeechBuffer();
+    window.VAWAudio.startListening();
   }
 
   /**

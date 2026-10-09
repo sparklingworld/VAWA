@@ -542,15 +542,33 @@ const VAWAKnowledge = (() => {
     const words = text.split(/\s+/).filter(w => w.length > 2);
     const keywords = (questionObj.keywords || []).map(k => k.toLowerCase());
 
-    // 1. Keyword / Concept coverage
+    // 1. Keyword / Concept coverage (with sub-phrase & stem tolerance)
     let matchedKeywords = [];
     let missedKeywords = [];
 
     keywords.forEach(kw => {
+      const kwWords = kw.split(/\s+/).filter(w => w.length > 2);
       if (text.includes(kw)) {
         matchedKeywords.push(kw);
+      } else if (kwWords.length > 1) {
+        // Multi-word phrase: match if candidate mentioned at least half of the key words
+        const subHits = kwWords.filter(sub => {
+          const stem = sub.length > 4 ? sub.slice(0, -2) : sub;
+          return text.includes(sub) || text.includes(stem);
+        });
+        if (subHits.length / kwWords.length >= 0.5) {
+          matchedKeywords.push(kw);
+        } else {
+          missedKeywords.push(kw);
+        }
       } else {
-        missedKeywords.push(kw);
+        // Single word: test stem
+        const stem = kw.length > 4 ? kw.slice(0, -2) : kw;
+        if (text.includes(stem)) {
+          matchedKeywords.push(kw);
+        } else {
+          missedKeywords.push(kw);
+        }
       }
     });
 
@@ -559,16 +577,16 @@ const VAWAKnowledge = (() => {
     // 2. Length & Structural Depth
     const wordCount = words.length;
     let lengthScore = 0;
-    if (wordCount >= 60) lengthScore = 1.0;
-    else if (wordCount >= 35) lengthScore = 0.8;
-    else if (wordCount >= 20) lengthScore = 0.6;
-    else if (wordCount >= 10) lengthScore = 0.4;
-    else lengthScore = 0.2;
+    if (wordCount >= 50) lengthScore = 1.0;
+    else if (wordCount >= 30) lengthScore = 0.85;
+    else if (wordCount >= 18) lengthScore = 0.7;
+    else if (wordCount >= 10) lengthScore = 0.5;
+    else lengthScore = 0.25;
 
     // 3. Difficulty weighting
     let difficultyWeight = 1.0;
-    if (difficultyLevel === 'crucible') difficultyWeight = 0.85; // Stricter grading
-    else if (difficultyLevel === 'rigorous') difficultyWeight = 0.9;
+    if (difficultyLevel === 'crucible') difficultyWeight = 0.88;
+    else if (difficultyLevel === 'rigorous') difficultyWeight = 0.93;
 
     // Combined score calculation (0 - 100)
     let rawScore = ((keywordRatio * 65) + (lengthScore * 35)) * difficultyWeight;
@@ -576,20 +594,20 @@ const VAWAKnowledge = (() => {
 
     // Academic viva honors determination
     let grade = 'Pass';
-    if (finalScore >= 92) grade = 'First Class Honours (Summa Cum Laude)';
-    else if (finalScore >= 80) grade = 'Upper Second Honours (Magna Cum Laude)';
-    else if (finalScore >= 65) grade = 'Merit Pass';
+    if (finalScore >= 90) grade = 'First Class Honours (Summa Cum Laude)';
+    else if (finalScore >= 78) grade = 'Upper Second Honours (Magna Cum Laude)';
+    else if (finalScore >= 62) grade = 'Merit Pass';
     else if (finalScore >= 45) grade = 'Conditional Pass (Revision Required)';
     else grade = 'Deficient (Unsatisfactory Defense)';
 
-    // Dynamic feedback commentary
+    // Dynamic teacher feedback commentary
     let feedback = '';
     if (finalScore >= 85) {
-      feedback = `Commendable defense. You demonstrated commanding grasp of core mechanisms (${matchedKeywords.slice(0, 3).join(', ')}). Your argument was cogent and academically structured.`;
-    } else if (finalScore >= 65) {
-      feedback = `Solid grasp of fundamental principles. You identified key pillars (${matchedKeywords.slice(0, 2).join(', ')}), though further rigor regarding ${missedKeywords[0] || 'edge-case interactions'} would elevate this to highest distinction.`;
+      feedback = `Excellent defense. You clearly understood the core mechanisms, notably ${matchedKeywords.slice(0, 3).join(', ')}. Your spoken argument was articulate and conceptually rigorous.`;
+    } else if (finalScore >= 60) {
+      feedback = `Good attempt. You correctly identified ${matchedKeywords.slice(0, 2).join(', ')}, but as your viva examiner, I noticed you omitted vital points regarding ${missedKeywords.slice(0, 2).join(' and ') || 'operational boundaries'}.`;
     } else {
-      feedback = `Your answer touched upon the topic, but omitted pivotal technical tenets (${missedKeywords.slice(0, 3).join(', ')}). Review the Simplified Model below to crystallize the intuition.`;
+      feedback = `Defense requires revision. You spoke on the topic, but missed key technical foundations (${missedKeywords.slice(0, 3).join(', ')}). Study the simplified mental model below to crystallize the concept.`;
     }
 
     return {

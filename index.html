@@ -148,9 +148,15 @@
               <span>🎙️</span> Candidate Oral Defense Input
             </div>
             <label style="display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);cursor:pointer;">
-              <input type="checkbox" id="hands-free-toggle" style="accent-color:var(--bronze-gold);">
-              <span>Hands-Free Viva Mode</span>
+              <input type="checkbox" id="hands-free-toggle" checked style="accent-color:var(--bronze-gold);">
+              <span>Hands-Free Viva Mode (Auto-Listen & Auto-Analyze)</span>
             </label>
+          </div>
+
+          <!-- Active Listening Status Pill -->
+          <div id="listening-status-pill" class="listening-status-pill" style="display:none;align-items:center;gap:8px;padding:8px 14px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:6px;font-family:var(--font-mono);font-size:12px;color:#fca5a5;">
+            <span class="live-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;box-shadow:0 0 10px #ef4444;"></span>
+            <span id="listening-status-text">Teacher is listening to your voice... Speak your defense now.</span>
           </div>
 
           <!-- Live Vocal Stream / Text Editor -->
@@ -158,7 +164,7 @@
             id="transcript-stream-box" 
             class="transcript-stream-box" 
             contenteditable="true" 
-            data-placeholder="Examiner listening... Speak your defense into the microphone, or type here."
+            data-placeholder="Teacher is listening... Speak your defense into the microphone, or type here."
             aria-label="Candidate defense response area"
           ></div>
 

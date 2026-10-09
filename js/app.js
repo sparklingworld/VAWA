@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnSpeakMic = document.getElementById('btn-speak-mic');
   const btnSubmitDefense = document.getElementById('btn-submit-defense');
   const handsFreeToggle = document.getElementById('hands-free-toggle');
+  const listeningStatusPill = document.getElementById('listening-status-pill');
+  const listeningStatusText = document.getElementById('listening-status-text');
 
   // Evaluation & Good/Simple Answer Stage
   const evaluationStage = document.getElementById('evaluation-stage');
@@ -90,9 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // On Speech Result
     (result) => {
       if (transcriptStreamBox) {
-        transcriptStreamBox.innerText = result.final || result.interim;
+        const fullSpoken = result.fullText || (result.final + (result.interim ? ' ' + result.interim : '')).trim();
+        if (fullSpoken) {
+          transcriptStreamBox.innerText = fullSpoken;
+          transcriptStreamBox.scrollTop = transcriptStreamBox.scrollHeight;
+        }
         
-        // Check if the candidate just issued a voice command like "Ask me about Quantum Computing"
+        // Check if candidate issued a voice command like "Ask me about Quantum Computing"
         if (window.VAWAgent.getState() === window.VAWAgent.STATES.IDLE || 
             window.VAWAgent.getState() === window.VAWAgent.STATES.CONCLUDED) {
           const command = window.VAWAgent.parseVivaCommand(result.final);
@@ -108,12 +114,15 @@ document.addEventListener('DOMContentLoaded', () => {
     (state) => {
       updateExaminerStatusDisplay(state);
     },
-    // On Silence Detected (Hands-Free conclusion)
+    // On Silence Detected (Hands-Free viva conclusion)
     () => {
-      if (handsFreeToggle && handsFreeToggle.checked && 
-          window.VAWAgent.getState() === window.VAWAgent.STATES.CANDIDATE_LISTENING) {
+      if (window.VAWAgent.getState() === window.VAWAgent.STATES.CANDIDATE_LISTENING) {
         const text = transcriptStreamBox ? transcriptStreamBox.innerText.trim() : '';
-        if (text.length > 5) {
+        if (text.length >= 8) {
+          showToast('Speech pause detected. Teacher analyzing defense...', 'info');
+          if (listeningStatusText) {
+            listeningStatusText.innerText = 'Defense concluded. Teacher analyzing your response...';
+          }
           window.VAWAgent.submitCandidateAnswer(text);
         }
       }
@@ -335,23 +344,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!examinerStatusLabel) return;
 
     if (state === 'EXAMINER_SPEAKING' || state === 'SPEAKING') {
-      examinerStatusLabel.innerText = 'Examiner Inquiring (Speaking)';
+      examinerStatusLabel.innerText = 'Teacher Inquiring (Speaking)';
       examinerChamber.classList.add('speaking');
+      if (listeningStatusPill) listeningStatusPill.style.display = 'none';
+      if (btnSpeakMic) {
+        btnSpeakMic.classList.remove('recording');
+        btnSpeakMic.innerHTML = '<span>🎙️</span> Teacher Speaking...';
+      }
     } else if (state === 'CANDIDATE_LISTENING' || state === 'LISTENING') {
-      examinerStatusLabel.innerText = 'Examiner Attentive (Listening)';
+      examinerStatusLabel.innerText = 'Teacher Attentive (Listening)';
       examinerChamber.classList.remove('speaking');
+      if (listeningStatusPill) {
+        listeningStatusPill.style.display = 'flex';
+        if (listeningStatusText) {
+          listeningStatusText.innerText = 'Teacher is listening to your answer... Speak naturally (or tap Submit when done)';
+        }
+      }
+      if (btnSpeakMic) {
+        btnSpeakMic.classList.add('recording');
+        btnSpeakMic.innerHTML = '<span>🔴</span> Teacher Listening (Tap to Pause)';
+      }
     } else if (state === 'EVALUATING') {
-      examinerStatusLabel.innerText = 'Analyzing Defense Rubric...';
+      examinerStatusLabel.innerText = 'Teacher Analyzing Your Answer...';
       examinerChamber.classList.remove('speaking');
+      if (listeningStatusPill) {
+        listeningStatusPill.style.display = 'flex';
+        if (listeningStatusText) {
+          listeningStatusText.innerText = 'Teacher is analyzing your response and grading defense...';
+        }
+      }
+      if (btnSpeakMic) {
+        btnSpeakMic.classList.remove('recording');
+        btnSpeakMic.innerHTML = '<span>⏳</span> Analyzing Response...';
+      }
     } else if (state === 'EXPLAINING') {
-      examinerStatusLabel.innerText = 'Displaying Simplified Model';
+      examinerStatusLabel.innerText = 'Teacher Explaining & Reviewing';
       examinerChamber.classList.remove('speaking');
+      if (listeningStatusPill) listeningStatusPill.style.display = 'none';
+      if (btnSpeakMic) {
+        btnSpeakMic.classList.remove('recording');
+        btnSpeakMic.innerHTML = '<span>🎙️</span> Tap to Speak Defense';
+      }
     } else if (state === 'CONCLUDED') {
       examinerStatusLabel.innerText = 'Defense Concluded';
       examinerChamber.classList.remove('speaking');
+      if (listeningStatusPill) listeningStatusPill.style.display = 'none';
+      if (btnSpeakMic) {
+        btnSpeakMic.classList.remove('recording');
+        btnSpeakMic.innerHTML = '<span>🎙️</span> Tap to Speak Defense';
+      }
     } else {
-      examinerStatusLabel.innerText = 'Examiner Standby';
+      examinerStatusLabel.innerText = 'Teacher Standby';
       examinerChamber.classList.remove('speaking');
+      if (listeningStatusPill) listeningStatusPill.style.display = 'none';
     }
   }
 

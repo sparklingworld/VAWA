@@ -103,26 +103,31 @@ ${previousQAHistory.map((qa, i) => `Q${i+1}: ${qa.question}`).join('\n') || 'Non
       return window.VAWAKnowledge.evaluateAnswer(candidateAnswer, questionObj, difficultyLevel);
     }
 
-    const systemInstruction = `You are a prestigious Academic Viva Examiner evaluating a candidate's spoken defense.
+    const systemInstruction = `You are a Lead Academic Viva Voce Professor evaluating a candidate's spoken defense in real-time.
 Question asked: "${questionObj.question}"
 Difficulty: ${difficultyLevel}
 Ideal Benchmark: "${questionObj.idealAnswer}"
 
-Analyze the candidate's actual response. Grade strictly but constructively.
+You have listened carefully to the candidate's spoken words. Analyze their defense like a genuine professor across the viva table:
+1. Identify what parts of their answer were accurate and which key concepts were mentioned.
+2. Call out any technical misconceptions or crucial nuances they missed.
+3. In "feedback", write 2-3 sentences of spoken constructive feedback addressed to the candidate ("Candidate, you accurately established... However, you overlooked...").
+4. Formulate "The Good & Simple Answer" to crystallize the intuition.
+
 Respond strictly in valid JSON adhering to this schema:
 {
   "score": <integer from 0 to 100>,
   "grade": "<First Class Honours (Summa Cum Laude) | Upper Second Honours (Magna Cum Laude) | Merit Pass | Conditional Pass | Deficient>",
-  "feedback": "<2-3 sentences of formal viva feedback, praising strong concepts and pointing out missed nuances>",
+  "feedback": "<2-3 sentences of direct teacher critique addressed to the candidate>",
   "keyConceptsPresent": ["list", "of", "concepts", "candidate", "mentioned"],
   "keyConceptsMissing": ["list", "of", "vital", "concepts", "candidate", "omitted"],
   "simpleAnswer": {
-    "summary": "<The most crystal-clear, plain-English explanation of this concept>",
+    "summary": "<The most crystal-clear, plain-English explanation of this concept in 1-2 sentences>",
     "analogy": "<A memorable, intuitive real-world analogy>",
     "threePillars": [
-      "<Pillar 1>",
-      "<Pillar 2>",
-      "<Pillar 3>"
+      "<Pillar 1: Key mechanism>",
+      "<Pillar 2: Boundary or trade-off>",
+      "<Pillar 3: Golden rule>"
     ]
   }
 }`;
