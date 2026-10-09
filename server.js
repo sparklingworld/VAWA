@@ -76,10 +76,22 @@ const server = http.createServer((req, res) => {
   });
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.warn(`[VAWA Notice] Port ${PORT} is busy. Trying port ${Number(PORT) + 1}...`);
+    server.listen(Number(PORT) + 1);
+  } else {
+    console.error('[VAWA Server Error]', err);
+  }
+});
+
 server.listen(PORT, () => {
+  const actualPort = server.address().port;
   console.log(`====================================================`);
   console.log(` VAWA - Voice Academic Viva Assessor Running`);
-  console.log(` URL: http://localhost:${PORT}`);
+  console.log(` Local:   http://localhost:${actualPort}`);
+  console.log(` Network: http://127.0.0.1:${actualPort}`);
   console.log(` Security: Strict CSP & COOP Enabled`);
   console.log(`====================================================`);
 });
+
